@@ -12,6 +12,13 @@ RUN CGO_ENABLED=0 go build -o backend-app ./cmd/api/ && go clean -cache -modcach
 # deploy the application binary into a lean image
 FROM alpine:latest AS deploying-backend-app
 
+ARG port=8081
+# we need it as ARG will not survive by the time it is used in HEALTHCHECK
+ENV PORT=$port
+
+# curl will be used in HEALTHCHECK
+RUN apk add --no-cache curl
+
 WORKDIR /backend
 
 COPY --from=building-backend-app /backend/backend-app ./backend-app
@@ -26,6 +33,10 @@ RUN chown -R appuser:appuser .
 # switching to a non-root user
 USER appuser
 
-EXPOSE 8081
+EXPOSE ${PORT}
+
+# without -f flag curl will return 0 even if HTTP status code is 4xx/5xx
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:${PORT}/health
 
 CMD ["./backend-app"]
