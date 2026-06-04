@@ -1,0 +1,5 @@
+Dockerfile
+.dockerignore
+
+# don't copy locally built app (by go build -o backend ./cmd/api/)
+backend
