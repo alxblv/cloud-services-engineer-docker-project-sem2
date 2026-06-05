@@ -16,9 +16,8 @@ COPY . .
 
 # build the app
 ARG VUE_APP_API_URL=/api
-ENV VUE_APP_API_URL=$VUE_APP_API_URL
 
-RUN npm run build
+RUN VUE_APP_API_URL=${VUE_APP_API_URL} npm run build --verbose
 
 # deploy the application binary into a lean image
 FROM nginx:1.30.2-alpine3.23 AS deploying-frontend-app
