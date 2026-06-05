@@ -46,7 +46,7 @@ jobs:
         - name: Trivy scan frontend
           uses: aquasecurity/trivy-action@v0.36.0
           with:
-            image-ref: '${{ secrets.DOCKER_USER }}/docker-project-backend:latest'
+            image-ref: '${{ secrets.DOCKER_USER }}/docker-project-frontend:latest'
             format: 'table'
             exit-code: '1'
             severity: 'CRITICAL,HIGH'
