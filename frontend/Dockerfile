@@ -15,7 +15,9 @@ RUN npm ci
 COPY . .
 
 # build the app
-RUN VUE_APP_API_URL=/api npm run build
+ARG VUE_APP_API_URL=/api
+
+RUN VUE_APP_API_URL=${VUE_APP_API_URL} npm run build
 
 # deploy the application binary into a lean image
 FROM nginx:stable-alpine AS deploying-frontend-app
@@ -28,7 +30,7 @@ RUN apk add --no-cache curl
 COPY --from=building-frontend-app /frontend/dist /usr/share/nginx/html/momo-store
 
 # nginx needs config to proxy api to backend and to serve static stuff
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# COPY nginx.conf /etc/nginx/conf.d/default.conf # MOUNTING IN docker-compose.yml INSTEAD!
 
 # creating non-root user and changing owner (alpine)
 RUN addgroup -S appuser && adduser -S appuser -G appuser

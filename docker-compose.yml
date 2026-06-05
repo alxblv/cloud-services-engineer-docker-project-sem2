@@ -1,0 +1,33 @@
+# version: "3.8" # the attribute `version` is obsolete
+
+services:
+  backend:
+    container_name: backend
+    build: ./backend/
+    networks:
+      - docker-network
+    ports:
+      - "8081:8081"
+    restart: on-failure
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      args:
+        VUE_APP_API_URL: /api # can be something else, see nginx.conf with proxy_pass to backend
+    networks:
+      - docker-network
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf # instead of copying it in Dockerfile
+    depends_on:
+      backend:
+        condition: service_healthy
+        restart: true
+    restart: on-failure
+
+networks:
+  docker-network:
+    driver: bridge

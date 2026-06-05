@@ -18,12 +18,18 @@ docker build --no-cache -t frontend ./frontend/
 ```
 docker network create docker-network
 docker run -d --name backend --network docker-network -p 8081:8081 backend
-docker run -d --name frontend --network docker-network -p 80:80 frontend
+docker run -d --name frontend --network docker-network -p 80:80 -v frontend/nginx.conf:/etc/nginx/conf.d/default.conf frontend
 ```
 
 В браузере:
 ```
 http://localhost/momo-store/
+```
+
+Если с `docker compose`:
+
+```
+docker compose up -d
 ```
 
 ## Оптимизация размера образов 
@@ -43,3 +49,5 @@ frontend:latest                               e5198c708e64       97.6MB         
 ##  Конфигурируемость контейнеров
 
 TODO: контейнеры гибко настраиваются через переменные окружения и build-аргументы, конфигурация чётко описана
+
+`VUE_APP_API_URL` - можно переопределить в `docker-compose.yml`, требуется при сборке `frontend` и должно совпадать с префиксом в `location` в `nginx.conf` для `proxy_pass` на `backend` (значение по умолчанию - `/api`)
