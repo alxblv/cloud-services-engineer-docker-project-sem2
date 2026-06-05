@@ -17,8 +17,11 @@ docker build --no-cache -t frontend ./frontend/
 
 ```
 docker network create docker-network
-docker run -d --name backend --network docker-network -p 8081:8081 backend
-docker run -d --name frontend --network docker-network -p 80:80 -v frontend/nginx.conf:/etc/nginx/conf.d/default.conf frontend
+docker run -d --name backend --network docker-network -p 8081:8081 --cap-drop=ALL --read-only backend
+docker run -d --name frontend --network docker-network -p 80:80 \
+              -v ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
+              --cap-drop=ALL --cap-add=NET_BIND_SERVICE \
+              frontend
 ```
 
 В браузере:

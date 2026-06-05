@@ -1,5 +1,5 @@
 # multistage building as described in https://docs.docker.com/guides/golang/build-images/
-FROM golang:latest AS building-backend-app
+FROM golang:1.26.4 AS building-backend-app
 
 WORKDIR /backend
 
@@ -10,7 +10,7 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o backend-app ./cmd/api/ && go clean -cache -modcache
 
 # deploy the application binary into a lean image
-FROM alpine:latest AS deploying-backend-app
+FROM alpine:3.23.4 AS deploying-backend-app
 
 ARG port=8081
 # we need it as ARG will not survive by the time it is used in HEALTHCHECK

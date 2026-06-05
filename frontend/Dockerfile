@@ -1,6 +1,6 @@
 # multistage building as described in https://v2.vuejs.org/v2/cookbook/dockerize-vuejs-app.htm
 # using older version to avoid ERR_OSSL_EVP_UNSUPPORTED error
-FROM node:16-alpine AS building-frontend-app
+FROM node:26-alpine3.22 AS building-frontend-app
 
 WORKDIR /frontend
 
@@ -20,7 +20,7 @@ ARG VUE_APP_API_URL=/api
 RUN VUE_APP_API_URL=${VUE_APP_API_URL} npm run build
 
 # deploy the application binary into a lean image
-FROM nginx:stable-alpine AS deploying-frontend-app
+FROM nginx:1.30.2-alpine3.23 AS deploying-frontend-app
 
 # curl will be used in HEALTHCHECK
 RUN apk add --no-cache curl
