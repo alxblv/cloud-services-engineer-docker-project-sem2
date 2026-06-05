@@ -9,8 +9,8 @@ TODO: в README.md есть команды запуска
 Пересобираем образы с нуля в директориях с Dockerfile:
 
 ```
-docker build --no-cache -t backend .
-docker build --no-cache -t frontend .
+docker build --no-cache -t backend ./backend/
+docker build --no-cache -t frontend ./frontend/
 ```
 
 Создаем сеть для связи между контейнерами и запускаем оба контейнера:
@@ -23,7 +23,7 @@ docker run -d --name frontend --network docker-network -p 80:80 frontend
 
 В браузере:
 ```
-http://localhost/momo-store/catalog
+http://localhost/momo-store/
 ```
 
 ## Оптимизация размера образов 

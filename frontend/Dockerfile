@@ -20,6 +20,9 @@ RUN VUE_APP_API_URL=/api npm run build
 # deploy the application binary into a lean image
 FROM nginx:stable-alpine AS deploying-frontend-app
 
+# curl will be used in HEALTHCHECK
+RUN apk add --no-cache curl
+
 # as we used npm run build, NODE_ENV is set to production
 # and according to vue.config.js, the path includes momo-store
 COPY --from=building-frontend-app /frontend/dist /usr/share/nginx/html/momo-store
@@ -27,7 +30,18 @@ COPY --from=building-frontend-app /frontend/dist /usr/share/nginx/html/momo-stor
 # nginx needs config to proxy api to backend and to serve static stuff
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# creating non-root user and changing owner (alpine)
+RUN addgroup -S appuser && adduser -S appuser -G appuser
+RUN chown -R appuser:appuser /usr/share/nginx/html /etc/nginx/conf.d /var/cache/nginx /run
+
+# switching to a non-root user
+USER appuser
+
 EXPOSE 80
+
+# without -f flag curl will return 0 even if HTTP status code is 4xx/5xx
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost/momo-store/
 
 # daemon off - so the main process is active and container does not exit immediately
 CMD ["nginx", "-g", "daemon off;"]
