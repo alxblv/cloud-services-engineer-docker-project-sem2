@@ -20,7 +20,7 @@ ARG VUE_APP_API_URL=/api
 RUN VUE_APP_API_URL=${VUE_APP_API_URL} npm run build --verbose
 
 # deploy the application binary into a lean image
-FROM nginx:1.30.2-alpine AS deploying-frontend-app
+FROM nginx:1.31.1-alpine3.23-slim AS deploying-frontend-app
 
 # curl will be used in HEALTHCHECK
 RUN apk add --no-cache curl
