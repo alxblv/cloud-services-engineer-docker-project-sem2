@@ -17,10 +17,12 @@ docker build --no-cache -t frontend ./frontend/
 
 ```
 docker network create docker-network
-docker run -d --name backend --network docker-network -p 8081:8081 --cap-drop=ALL --read-only backend
+docker run -d --name backend --network docker-network -p 8081:8081 \
+              --cap-drop=ALL --read-only --memory=256m --cpus=0.5 backend
 docker run -d --name frontend --network docker-network -p 80:80 \
               -v ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
               --cap-drop=ALL --cap-add=NET_BIND_SERVICE \
+              --memory=64m --cpus=0.1 \
               frontend
 ```
 
@@ -32,7 +34,7 @@ http://localhost/momo-store/
 Если с `docker compose`:
 
 ```
-docker compose up -d
+docker compose up -d --scale backend=3
 ```
 
 ## Оптимизация размера образов 
