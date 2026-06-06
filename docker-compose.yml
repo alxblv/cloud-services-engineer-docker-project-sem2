@@ -6,8 +6,6 @@ services:
     build: ./backend/
     networks:
       - docker-network
-    expose:
-      - "8081" # explicit mapping ports: "8081:8081" prevents scaling
     mem_limit: 256m
     cpus: 0.5
     cap_drop:
